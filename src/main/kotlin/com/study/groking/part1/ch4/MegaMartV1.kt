@@ -1,23 +1,19 @@
 package com.study.groking.part1.ch4
 
-class MegaMartV0 {
+class MegaMartV1 {
 
-    private val shoppingCart = mutableListOf<Cart>() // Action
+    private var shoppingCart = mutableListOf<Cart>() // Action
     private var shoppingCartTotal: Int = 0 // Action
 
     // Action
     fun addItemToCart(name: String, price: Int) {
-        val item = Cart(name, price)
-        shoppingCart.add(item)
+        shoppingCart = addItem(shoppingCart, name, price)
         calcCartTotal()
     }
 
     // Action
     fun calcCartTotal() {
-        for (cart in shoppingCart) {
-            shoppingCartTotal += cart.price
-        }
-
+        shoppingCartTotal = calcTotal(shoppingCart)
         setCartTotalDom()
         updateShippingIcons()
         updateTaxDom()
@@ -26,7 +22,7 @@ class MegaMartV0 {
     // Action
     fun updateTaxDom() {
         // 세금 반영을 위한 DOM 업데이트
-        setTaxDom(shoppingCartTotal * 0.1)
+        setTaxDom(calcTax(shoppingCartTotal))
     }
 
     // Action
@@ -34,13 +30,37 @@ class MegaMartV0 {
         val buyButtons = getBuyButtonsDom()
         for (button in buyButtons) {
             val item = button.item
-            if (item.price + shoppingCartTotal >= 20) {
+            if (getFreeShipping(item.price, shoppingCartTotal)) {
                 button.showFreeShoppingIcon()
             } else {
                 button.hideFreeShippingIcon()
             }
         }
     }
+
+    // Calculation
+    private fun addItem(carts: List<Cart>, name: String, price: Int): MutableList<Cart> {
+        val item = Cart(name, price)
+        val newCart = carts.toMutableList()
+        newCart.add(item)
+        return newCart
+    }
+
+    // Calculation
+    private fun calcTotal(carts: List<Cart>): Int {
+        var total = 0
+        for (cart in carts) {
+            total += cart.price
+        }
+        return total
+    }
+
+    private fun setCartTotalDom() {
+        // 금액 합계 반영을 위한 DOM 업데이트
+    }
+
+    // Calculation
+    private fun getFreeShipping(itemPrice: Int, total: Int) = itemPrice + total >= 20
 
     private fun getBuyButtonsDom(): List<BuyButton> {
         // 모든 구매버튼의 정보
@@ -49,9 +69,8 @@ class MegaMartV0 {
         )
     }
 
-    private fun setCartTotalDom() {
-        // 금액 합계 반영을 위한 DOM 업데이트
-    }
+    // Calculation
+    private fun calcTax(amount: Int) = amount * 0.1
 
     private fun setTaxDom(d: Double) {
         TODO("Not yet implemented")
