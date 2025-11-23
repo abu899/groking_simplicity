@@ -2,3 +2,4 @@
 
 - [Intro](docs/intro.md)
 - [Part1](docs/part1.md)
+- [Part2](docs/part2.md)
